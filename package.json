@@ -1,0 +1,56 @@
+{
+  "name": "agent-task-protocol",
+  "version": "2026.5.24",
+  "description": "Portable, framework-agnostic protocol for durable agent tasks.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "atp": "./dist/cli.js"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./schema": "./schema/agent-task.schema.json"
+  },
+  "files": [
+    "dist",
+    "schema",
+    "README.md",
+    "ARCHITECTURE.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "node --test --import tsx 'src/**/*.test.ts'",
+    "cli": "tsx src/cli.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "keywords": [
+    "agent",
+    "ai",
+    "durable",
+    "tasks",
+    "workflow",
+    "mcp",
+    "langgraph",
+    "temporal"
+  ],
+  "author": "Vlad Bordei <bordeivlad@gmail.com> (https://github.com/p-vbordei)",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=22.19.0"
+  },
+  "dependencies": {
+    "ajv": "^8.20.0",
+    "uuid": "^11.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/uuid": "^10.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}

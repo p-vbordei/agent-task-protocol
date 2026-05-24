@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/p-vbordei/research_capabilities/applications/agent-task-protocol/schema/agent-task.schema.json",
+  "title": "AgentTask",
+  "type": "object",
+  "required": [
+    "id",
+    "protocolVersion",
+    "ownerKey",
+    "status",
+    "revision",
+    "goal",
+    "notifyPolicy",
+    "createdAt",
+    "updatedAt"
+  ],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "parentId": { "type": "string" },
+    "protocolVersion": { "const": "0.1" },
+    "ownerKey": { "type": "string", "minLength": 1 },
+    "requesterOrigin": {
+      "type": "object",
+      "required": ["channel"],
+      "properties": {
+        "channel": { "type": "string" },
+        "thread": { "type": "string" },
+        "account": { "type": "string" },
+        "peer": { "type": "string" }
+      }
+    },
+    "status": {
+      "enum": ["queued", "running", "waiting", "blocked", "succeeded", "failed", "cancelled", "lost"]
+    },
+    "revision": { "type": "integer", "minimum": 1 },
+    "currentStep": { "type": "string" },
+    "goal": { "type": "string", "minLength": 1 },
+    "stateJson": {},
+    "waitJson": {},
+    "blockedReason": { "type": "string" },
+    "notifyPolicy": { "enum": ["done_only", "state_changes", "silent"] },
+    "costBudget": {
+      "type": "object",
+      "required": ["currency", "cents"],
+      "properties": {
+        "currency": { "type": "string", "minLength": 3, "maxLength": 3 },
+        "cents": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "tokenBudget": {
+      "type": "object",
+      "properties": {
+        "input": { "type": "integer", "minimum": 0 },
+        "output": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "timeBudget": {
+      "type": "object",
+      "required": ["deadline"],
+      "properties": { "deadline": { "type": "string", "format": "date-time" } }
+    },
+    "retryPolicy": {
+      "type": "object",
+      "required": ["maxAttempts", "initialBackoffMs", "maxBackoffMs", "jitter"],
+      "properties": {
+        "maxAttempts": { "type": "integer", "minimum": 1 },
+        "initialBackoffMs": { "type": "integer", "minimum": 0 },
+        "maxBackoffMs": { "type": "integer", "minimum": 0 },
+        "jitter": { "enum": ["none", "full", "equal"] }
+      }
+    },
+    "humanCheckpoints": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "prompt", "requiredAt"],
+        "properties": {
+          "id": { "type": "string" },
+          "prompt": { "type": "string" },
+          "requiredAt": {
+            "enum": ["before_start", "before_each_step", "before_finalize", "on_failure"]
+          }
+        }
+      }
+    },
+    "cancelRequestedAt": { "type": "string", "format": "date-time" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "endedAt": { "type": "string", "format": "date-time" },
+    "result": {},
+    "error": { "type": "string" }
+  },
+  "additionalProperties": false
+}
