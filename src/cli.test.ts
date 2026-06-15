@@ -6,16 +6,21 @@ import os from "node:os";
 import fs from "node:fs";
 import { fileURLToPath } from "node:url";
 
-// Walk up from this test file to the package root, then to dist/cli.js.
-// import.meta.url -> .../src/cli.test.ts
+// Smoke-test the CLI from SOURCE, so it needs no prior `tsc` build and passes under both the
+// repo's own `node --test --import tsx` and the platform e2e harness's `bun test`. The CLI uses
+// `node:sqlite`, which bun does not provide, so the subprocess ALWAYS runs under Node + the tsx
+// loader regardless of which runner drives this test (under bun we take `node` from PATH; under
+// node we reuse the exact node executing the tests).
 const here = path.dirname(fileURLToPath(import.meta.url));
-const CLI = path.resolve(here, "..", "dist", "cli.js");
+const CLI = path.resolve(here, "cli.ts");
+const IS_BUN = Boolean((process.versions as { bun?: string }).bun);
+const NODE = IS_BUN ? "node" : process.execPath;
 
 function run(
   args: string[],
   env: NodeJS.ProcessEnv = {},
 ): { stdout: string; stderr: string; code: number | null } {
-  const res = spawnSync("node", [CLI, ...args], {
+  const res = spawnSync(NODE, ["--import", "tsx", CLI, ...args], {
     encoding: "utf8",
     env: { ...process.env, ...env },
   });
